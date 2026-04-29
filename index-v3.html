@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>跨境电商RPA场景库</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+      background: #fff;
+      color: #262626;
+      font-size: 14px;
+    }
+    
+    /* Layout */
+    .app { display: flex; height: 100vh; }
+    
+    /* Sidebar */
+    .sidebar {
+      width: 240px;
+      background: #fafafa;
+      border-right: 1px solid #e8e8e8;
+      display: flex;
+      flex-direction: column;
+    }
+    .sidebar-header {
+      padding: 20px;
+      border-bottom: 1px solid #e8e8e8;
+    }
+    .sidebar-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: #262626;
+      margin-bottom: 4px;
+    }
+    .sidebar-subtitle {
+      font-size: 13px;
+      color: #8c8c8c;
+    }
+    .dept-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 8px;
+    }
+    .dept-item {
+      display: flex;
+      align-items: center;
+      padding: 10px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-bottom: 2px;
+    }
+    .dept-item:hover { background: #f0f0f0; }
+    .dept-item.active {
+      background: #e6f7ff;
+      color: #1890ff;
+    }
+    .dept-icon {
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 10px;
+      font-size: 16px;
+    }
+    .dept-name { flex: 1; font-size: 14px; }
+    .dept-count {
+      font-size: 12px;
+      color: #8c8c8c;
+      background: #f0f0f0;
+      padding: 2px 8px;
+      border-radius: 10px;
+    }
+    .dept-item.active .dept-count {
+      background: #1890ff;
+      color: white;
+    }
+    
+    /* Main Content */
+    .main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    
+    /* Header */
+    .header {
+      padding: 20px 24px;
+      border-bottom: 1px solid #e8e8e8;
+      background: #fff;
+    }
+    .header-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+    .header-title {
+      font-size: 20px;
+      font-weight: 600;
+    }
+    .header-stats {
+      display: flex;
+      gap: 24px;
+    }
+    .stat-item {
+      text-align: right;
+    }
+    .stat-value {
+      font-size: 24px;
+      font-weight: 600;
+      color: #262626;
+    }
+    .stat-label {
+      font-size: 12px;
+      color: #8c8c8c;
+    }
+    
+    /* Filters */
+    .filters {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+    .filter-group {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    .filter-label {
+      font-size: 13px;
+      color: #595959;
+    }
+    .filter-btn {
+      padding: 5px 12px;
+      border: 1px solid #d9d9d9;
+      background: #fff;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 13px;
+      color: #595959;
+      transition: all 0.2s;
+    }
+    .filter-btn:hover {
+      border-color: #1890ff;
+      color: #1890ff;
+    }
+    .filter-btn.active {
+      background: #1890ff;
+      color: #fff;
+      border-color: #1890ff;
+    }
+    .search-input {
+      width: 240px;
+      padding: 6px 12px;
+      border: 1px solid #d9d9d9;
+      border-radius: 4px;
+      font-size: 13px;
+      margin-left: auto;
+    }
+    .search-input:focus {
+      outline: none;
+      border-color: #1890ff;
+    }
+    
+    /* Content Area */
+    .content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 24px;
+      background: #f5f5f5;
+    }
+    
+    /* Scenario Table */
+    .scenario-table {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.06);
+    }
+    .table-header {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 120px 1.5fr;
+      gap: 16px;
+      padding: 12px 20px;
+      background: #fafafa;
+      border-bottom: 1px solid #e8e8e8;
+      font-size: 13px;
+      font-weight: 500;
+      color: #595959;
+    }
+    .table-row {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 120px 1.5fr;
+      gap: 16px;
+      padding: 16px 20px;
+      border-bottom: 1px solid #f0f0f0;
+      align-items: start;
+      transition: background 0.2s;
+    }
+    .table-row:hover { background: #fafafa; }
+    .table-row:last-child { border-bottom: none; }
+    
+    /* Cell Content */
+    .cell-title {
+      font-weight: 500;
+      color: #262626;
+      margin-bottom: 6px;
+    }
+    .cell-desc {
+      font-size: 13px;
+      color: #595959;
+      line-height: 1.5;
+    }
+    .cell-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .tag {
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+    }
+    .tag-tech-rpa { background: #e6f7ff; color: #1890ff; }
+    .tag-tech-ai { background: #f6ffed; color: #52c41a; }
+    .tag-tech-api { background: #fff2f0; color: #ff4d4f; }
+    .tag-type-hot { background: #fff2f0; color: #ff4d4f; }
+    .tag-type-fast { background: #fff7e6; color: #fa8c16; }
+    .tag-type-potential { background: #f9f0ff; color: #722ed1; }
+    
+    .cell-platform {
+      font-size: 13px;
+      color: #262626;
+    }
+    .cell-model {
+      font-size: 13px;
+      color: #595959;
+    }
+    
+    /* Value Cell */
+    .cell-value {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .value-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+    }
+    .value-icon { font-size: 14px; }
+    .value-text { color: #595959; }
+    .value-highlight { color: #52c41a; font-weight: 500; }
+    
+    /* Empty State */
+    .empty-state {
+      text-align: center;
+      padding: 60px;
+      color: #8c8c8c;
+    }
+    
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #d9d9d9; border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: #bfbfbf; }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-title">🚀 RPA场景库</div>
+        <div class="sidebar-subtitle">跨境电商自动化解决方案</div>
+      </div>
+      <div class="dept-list" id="deptSidebar"></div>
+    </div>
+    
+    <!-- Main -->
+    <div class="main">
+      <!-- Header -->
+      <div class="header">
+        <div class="header-top">
+          <div class="header-title" id="headerTitle">全部场景</div>
+          <div class="header-stats">
+            <div class="stat-item">
+              <div class="stat-value" id="statCount">301</div>
+              <div class="stat-label">场景总数</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value" id="statPlat">13</div>
+              <div class="stat-label">覆盖平台</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value">2-4h</div>
+              <div class="stat-label">日均节省</div>
+            </div>
+          </div>
+        </div>
+        <div class="filters">
+          <div class="filter-group">
+            <span class="filter-label">技术:</span>
+            <div id="techFilters"></div>
+          </div>
+          <div class="filter-group">
+            <span class="filter-label">模式:</span>
+            <div id="modelFilters"></div>
+          </div>
+          <input type="text" class="search-input" id="searchInput" placeholder="搜索场景名称、关键词...">
+        </div>
+      </div>
+      
+      <!-- Content -->
+      <div class="content">
+        <div class="scenario-table">
+          <div class="table-header">
+            <div>场景名称 / 描述</div>
+            <div>平台</div>
+            <div>业务模式</div>
+            <div>技术类型</div>
+            <div>价值量化</div>
+          </div>
+          <div id="tableBody"></div>
+        </div>
+        <div class="empty-state" id="emptyState" style="display:none;">
+          <div style="font-size:48px;margin-bottom:16px;">🔎</div>
+          <p>没有找到匹配的场景</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+// Data
+const DEPTS = [
+  {name:"全部", icon:"🏢"},
+  {name:"运营", icon:"📈"},
+  {name:"财务", icon:"💰"},
+  {name:"供应链", icon:"📦"},
+  {name:"客服", icon:"💬"},
+  {name:"人事", icon:"👥"},
+  {name:"管理", icon:"⚙️"},
+  {name:"合规", icon:"🛡️"},
+  {name:"技术", icon:"🔧"},
+];
+
+const TECHS = ["全部", "RPA", "AI", "API"];
+const MODELS = ["全部", "品牌型", "精品型", "精铺型", "铺货型", "通用"];
+
+// Sample data (6 examples)
+const SCENARIOS = [
+  {name:"商品详情批量采集", desc:"批量采集竞品ASIN的标题、价格、评分、问答数等核心数据", platform:"亚马逊", model:"品牌型", type:"hot", tech:"RPA", dept:"运营", saveTime:"每天节省2-3小时", saveCost:"减少1名专员", efficiency:"效率提升10倍"},
+  {name:"关键词排名监控", desc:"每日自动监控核心关键词的自然排名和广告排名变化", platform:"亚马逊", model:"品牌型", type:"hot", tech:"RPA", dept:"运营", saveTime:"每天节省1.5小时", saveCost:"", efficiency:"数据准确率100%"},
+  {name:"跟卖监控与投诉", desc:"24小时监控跟卖，发现后自动发起投诉，保护Listing", platform:"亚马逊", model:"品牌型", type:"hot", tech:"RPA+API", dept:"运营", saveTime:"7×24小时监控", saveCost:"减少损失", efficiency:"响应<5分钟"},
+  {name:"广告数据日报", desc:"每日自动导出广告报表，汇总花费、点击、转化数据", platform:"亚马逊", model:"品牌型", type:"fast", tech:"RPA", dept:"财务", saveTime:"每天节省1小时", saveCost:"", efficiency:"零人工误差"},
+  {name:"FBA库存预警", desc:"自动监控FBA库存，低于安全库存自动发邮件通知", platform:"亚马逊", model:"品牌型", type:"hot", tech:"API", dept:"供应链", saveTime:"每天节省2小时", saveCost:"避免断货", efficiency:"预警率100%"},
+  {name:"评价监控与预警", desc:"实时监控新增Review，差评自动预警", platform:"亚马逊", model:"品牌型", type:"fast", tech:"RPA", dept:"客服", saveTime:"实时响应", saveCost:"提升满意度", efficiency:"时效提升80%"},
+];
+
+// State
+let activeDept = "全部";
+let activeTech = "全部";
+let activeModel = "全部";
+let searchKeyword = "";
+
+// Render
+function render() {
+  // Filter
+  let filtered = SCENARIOS.filter(s => {
+    if (activeDept !== "全部" && s.dept !== activeDept) return false;
+    if (activeTech !== "全部" && !s.tech.includes(activeTech)) return false;
+    if (activeModel !== "全部" && s.model !== activeModel) return false;
+    if (searchKeyword) {
+      const kw = searchKeyword.toLowerCase();
+      const text = [s.name, s.desc, s.platform, s.dept].join(' ').toLowerCase();
+      if (!text.includes(kw)) return false;
+    }
+    return true;
+  });
+  
+  // Update stats
+  document.getElementById('statCount').textContent = filtered.length;
+  document.getElementById('statPlat').textContent = new Set(filtered.map(s => s.platform)).size;
+  document.getElementById('headerTitle').textContent = activeDept === "全部" ? "全部场景" : activeDept + "场景";
+  
+  // Render table
+  const tbody = document.getElementById('tableBody');
+  const empty = document.getElementById('emptyState');
+  
+  if (filtered.length === 0) {
+    tbody.innerHTML = '';
+    empty.style.display = 'block';
+  } else {
+    empty.style.display = 'none';
+    tbody.innerHTML = filtered.map(s => renderRow(s)).join('');
+  }
+}
+
+function renderRow(s) {
+  const techClass = s.tech.includes('AI') ? 'tag-tech-ai' : s.tech.includes('API') ? 'tag-tech-api' : 'tag-tech-rpa';
+  const typeClass = s.type === 'hot' ? 'tag-type-hot' : s.type === 'fast' ? 'tag-type-fast' : 'tag-type-potential';
+  const typeText = s.type === 'hot' ? '🔥高频' : s.type === 'fast' ? '⚡提效' : '🌱潜力';
+  
+  return `
+    <div class="table-row">
+      <div>
+        <div class="cell-title">${s.name}</div>
+        <div class="cell-desc">${s.desc}</div>
+      </div>
+      <div class="cell-platform">${s.platform}</div>
+      <div class="cell-model">${s.model}</div>
+      <div>
+        <div class="cell-tags">
+          <span class="tag ${techClass}">${s.tech}</span>
+          <span class="tag ${typeClass}">${typeText}</span>
+        </div>
+      </div>
+      <div class="cell-value">
+        ${s.saveTime ? `<div class="value-item"><span class="value-icon">⏱️</span><span class="value-text">${s.saveTime}</span></div>` : ''}
+        ${s.saveCost ? `<div class="value-item"><span class="value-icon">💰</span><span class="value-highlight">${s.saveCost}</span></div>` : ''}
+        ${s.efficiency ? `<div class="value-item"><span class="value-icon">📈</span><span class="value-highlight">${s.efficiency}</span></div>` : ''}
+      </div>
+    </div>
+  `;
+}
+
+// Sidebar
+function renderSidebar() {
+  const counts = {};
+  DEPTS.forEach(d => counts[d.name] = 0);
+  SCENARIOS.forEach(s => { if(counts[s.dept] !== undefined) counts[s.dept]++; });
+  counts["全部"] = SCENARIOS.length;
+  
+  document.getElementById('deptSidebar').innerHTML = DEPTS.map(d => `
+    <div class="dept-item ${d.name === activeDept ? 'active' : ''}" onclick="setDept('${d.name}')">
+      <div class="dept-icon">${d.icon}</div>
+      <div class="dept-name">${d.name}</div>
+      <div class="dept-count">${counts[d.name]}</div>
+    </div>
+  `).join('');
+}
+
+// Filters
+function renderFilters() {
+  document.getElementById('techFilters').innerHTML = TECHS.map(t => `
+    <button class="filter-btn ${t === activeTech ? 'active' : ''}" onclick="setTech('${t}')">${t}</button>
+  `).join('');
+  
+  document.getElementById('modelFilters').innerHTML = MODELS.map(m => `
+    <button class="filter-btn ${m === activeModel ? 'active' : ''}" onclick="setModel('${m}')">${m}</button>
+  `).join('');
+}
+
+function setDept(d) { activeDept = d; renderSidebar(); render(); }
+function setTech(t) { activeTech = t; renderFilters(); render(); }
+function setModel(m) { activeModel = m; renderFilters(); render(); }
+
+// Search
+document.getElementById('searchInput').addEventListener('input', function(e) {
+  searchKeyword = e.target.value.trim();
+  render();
+});
+
+// Init
+renderSidebar();
+renderFilters();
+render();
+</script>
+</body>
+</html>

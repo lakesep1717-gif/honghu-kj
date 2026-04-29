@@ -1,0 +1,37 @@
+function renderCard(s,i){
+  const typeClass=s.type==='hot'?'tag-type-hot':s.type==='fast'?'tag-type-fast':'tag-type-potential';
+  const typeText=s.type==='hot'?'🔥高频刚需':s.type==='fast'?'⚡提效显著':'🌱潜力场景';
+  return `<div class="scenario-card"><div class="scenario-header"><div class="scenario-title">${s.name}</div><div class="scenario-tags"><span class="tag tag-platform">${s.platform}</span><span class="tag tag-model">${s.model}</span><span class="tag ${typeClass}">${typeText}</span></div></div><div class="scenario-desc">${s.desc}</div><div class="value-props">${s.saveTime?`<div class="value-item"><span class="value-icon">⏱️</span><span class="value-text">${s.saveTime}</span></div>`:''}${s.saveCost?`<div class="value-item"><span class="value-icon">💰</span><span class="value-highlight">${s.saveCost}</span></div>`:''}${s.efficiency?`<div class="value-item"><span class="value-icon">📈</span><span class="value-highlight">${s.efficiency}</span></div>`:''}</div><div class="sop-section"><div class="sop-header" onclick="toggleSop(${i})"><div class="sop-title">📋 查看实现步骤 (SOP)</div><div class="sop-toggle">展开 <span id="arrow-${i}">▼</span></div></div><div class="sop-content" id="sop-${i}">${s.sop.split(' → ').map((step,idx)=>`<div class="sop-step"><div class="sop-step-num">${idx+1}</div><div class="sop-step-text">${step}</div></div>`).join('')}</div></div></div>`;
+}
+
+function toggleSop(i){
+  const c=document.getElementById('sop-'+i);
+  const a=document.getElementById('arrow-'+i);
+  const show=c.classList.toggle('show');
+  a.parentElement.innerHTML=(show?'收起':'展开')+' <span id="arrow-'+i+'">'+(show?'▲':'▼')+'</span>';
+}
+
+function renderSidebar(){
+  const cnt={};
+  DEPTS.forEach(d=>cnt[d.name]=0);
+  SCENARIOS.forEach(s=>{if(cnt[s.dept]!==undefined)cnt[s.dept]++;});
+  cnt["全部"]=SCENARIOS.length;
+  document.getElementById('deptSidebar').innerHTML=DEPTS.map(d=>`<div class="dept-item ${d.name===activeDept?'active':''}" onclick="setDept('${d.name}')"><div class="dept-icon">${d.icon}</div><div class="dept-info"><div class="dept-name">${d.name}</div><div class="dept-count">${cnt[d.name]} 个场景</div></div></div>`).join('');
+}
+
+function renderFilters(){
+  document.getElementById('platformFilters').innerHTML=PLATFORMS.map(p=>`<button class="filter-btn ${p===activePlatform?'active':''}" onclick="setPlatform('${p}')">${p}</button>`).join('');
+  document.getElementById('modelFilters').innerHTML=MODELS.map(m=>`<button class="filter-btn ${m===activeModel?'active':''}" onclick="setModel('${m}')">${m}</button>`).join('');
+}
+
+function setDept(d){activeDept=d;renderSidebar();render();}
+function setPlatform(p){activePlatform=p;renderFilters();render();}
+function setModel(m){activeModel=m;renderFilters();render();}
+
+document.getElementById('searchInput').addEventListener('input',function(e){searchKeyword=e.target.value.trim();render();});
+
+document.getElementById('subtitle').textContent=SCENARIOS.length+'个自动化机会点 · '+new Set(SCENARIOS.map(s=>s.platform)).size+'个平台 · '+DEPTS.length+'大部门';
+renderSidebar();renderFilters();render();
+</script>
+</body>
+</html>

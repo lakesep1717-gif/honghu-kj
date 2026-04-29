@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>影刀RPA 跨境场景</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+    h1 {
+      color: white;
+      text-align: center;
+      font-size: 2.5em;
+      margin-bottom: 30px;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+    }
+    .stats {
+      background: rgba(255,255,255,0.15);
+      backdrop-filter: blur(10px);
+      border-radius: 15px;
+      padding: 20px;
+      margin-bottom: 20px;
+      display: flex;
+      justify-content: space-around;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+    .stat-item {
+      text-align: center;
+      color: white;
+    }
+    .stat-num {
+      font-size: 2em;
+      font-weight: bold;
+    }
+    .stat-label {
+      font-size: 0.9em;
+      opacity: 0.9;
+    }
+    .filters {
+      background: rgba(255,255,255,0.15);
+      backdrop-filter: blur(10px);
+      border-radius: 15px;
+      padding: 20px;
+      margin-bottom: 20px;
+      display: flex;
+      gap: 15px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .filter-group {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+    .filter-group label {
+      color: white;
+      font-weight: 500;
+    }
+    select, input {
+      padding: 8px 15px;
+      border: none;
+      border-radius: 20px;
+      background: white;
+      font-size: 14px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 20px;
+    }
+    .card {
+      background: rgba(255,255,255,0.95);
+      border-radius: 15px;
+      padding: 20px;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 12px;
+    }
+    .card-title {
+      font-size: 1.1em;
+      font-weight: 600;
+      color: #333;
+      flex: 1;
+    }
+    .card-badges {
+      display: flex;
+      gap: 5px;
+      flex-wrap: wrap;
+    }
+    .badge {
+      padding: 3px 10px;
+      border-radius: 12px;
+      font-size: 0.75em;
+      font-weight: 500;
+    }
+    .badge-dept { background: #e0e7ff; color: #4338ca; }
+    .badge-model { background: #fce7f3; color: #be185d; }
+    .badge-type { background: #d1fae5; color: #047857; }
+    .badge-platforms { background: #fef3c7; color: #b45309; }
+    .card-desc {
+      color: #666;
+      font-size: 0.9em;
+      margin-bottom: 12px;
+      line-height: 1.4;
+    }
+    .sop-toggle {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.85em;
+      width: 100%;
+      transition: opacity 0.3s;
+    }
+    .sop-toggle:hover {
+      opacity: 0.9;
+    }
+    .sop-content {
+      display: none;
+      margin-top: 12px;
+      padding: 12px;
+      background: #f8fafc;
+      border-radius: 8px;
+    }
+    .sop-content.show {
+      display: block;
+    }
+    .sop-step {
+      display: flex;
+      align-items: center;
+      padding: 8px 0;
+      border-bottom: 1px dashed #e2e8f0;
+    }
+    .sop-step:last-child {
+      border-bottom: none;
+    }
+    .step-num {
+      width: 24px;
+      height: 24px;
+      background: #667eea;
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8em;
+      margin-right: 10px;
+      flex-shrink: 0;
+    }
+    .step-text {
+      color: #475569;
+      font-size: 0.85em;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>影刀RPA 跨境场景</h1>
+    
+    <div class="stats">
+      <div class="stat-item">
+        <div class="stat-num" id="totalCount">174</div>
+        <div class="stat-label">场景总数</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">8</div>
+        <div class="stat-label">业务部门</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">15+</div>
+        <div class="stat-label">跨境平台</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">3步</div>
+        <div class="stat-label">标准SOP</div>
+      </div>
+    </div>
+    
+    <div class="filters">
+      <div class="filter-group">
+        <label>部门:</label>
+        <select id="deptFilter">
+          <option value="">全部</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label>平台:</label>
+        <select id="platformFilter">
+          <option value="">全部</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label>类型:</label>
+        <select id="typeFilter">
+          <option value="">全部</option>
+          <option value="hot">热门</option>
+          <option value="fast">快速见效</option>
+          <option value="potential">潜力场景</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <input type="text" id="searchInput" placeholder="搜索场景..." style="width: 200px;">
+      </div>
+    </div>
+    
+    <div class="grid" id="scenarioGrid"></div>
+  </div>
+  
+  <script>
+    const SCENARIOS = [{"name":"对账自动化","desc":"自动下载平台对账单并核对","dept":"财务","model":"精品型","type":"fast","platforms":["通用"],"platformCount":6,"sop":["下载平台账单","核对订单金额","输出差异报告"]},{"name":"采购单自动生成","desc":"根据库存和销售预测自动生成采购单","dept":"供应链","model":"品牌型","type":"potential","platforms":["通用"],"platformCount":6,"sop":["分析库存需求","生成采购单","跟踪到货状态"]},{"name":"退换货处理","desc":"自动处理退换货申请并生成工单","dept":"客服","model":"精铺型","type":"fast","platforms":["通用"],"platformCount":8,"sop":["审核退货申请","创建退货工单","更新退款状态"]},{"name":"考勤统计","desc":"自动统计员工考勤数据","dept":"人事","model":"品牌型","type":"fast","platforms":["通用"],"platformCount":6,"sop":["采集打卡数据","统计出勤情况","生成考勤表"]},{"name":"日报自动生成","desc":"自动汇总各部门数据生成日报","dept":"管理","model":"精品型","type":"fast","platforms":["通用"],"platformCount":8,"sop":["汇总业务数据","生成管理报表","支持决策分析"]},{"name":"税务申报","desc":"自动整理税务资料并提交申报","dept":"合规","model":"精品型","type":"fast","platforms":["通用"],"platformCount":7,"sop":["整理财务数据","计算应纳税额","生成申报表"]},{"name":"数据备份","desc":"自动备份关键业务数据","dept":"技术","model":"精品型","type":"fast","platforms":["通用"],"platformCount":8,"sop":["执行备份任务","验证备份完整性","存储备份文件"]},{"name":"广告报表下载","desc":"定时下载广告报表并汇总分析","dept":"运营","model":"精品型","type":"potential","platforms":["通用"],"platformCount":5,"sop":["汇总业务数据","生成可视化报表","定时发送管理层"]},{"name":"物流跟踪","desc":"自动跟踪物流状态并更新系统","dept":"供应链","model":"铺货型","type":"hot","platforms":["通用"],"platformCount":6,"sop":["抓取物流轨迹","更新配送状态","异常预警通知"]},{"name":"邮件自动回复","desc":"根据邮件内容自动分类并回复","dept":"客服","model":"品牌型","type":"fast","platforms":["通用"],"platformCount":8,"sop":["接收服务请求","执行处理流程","反馈处理结果"]},{"name":"薪资核算","desc":"自动核算薪资并生成工资条","dept":"人事","model":"精铺型","type":"fast","platforms":["通用"],"platformCount":8,"sop":["导入考勤绩效","计算薪资明细","生成工资单"]},{"name":"KPI报表","desc":"自动计算KPI指标并生成报表","dept":"管理","model":"铺货型","type":"fast","platforms":["通用"],"platformCount":8,"sop":["采集业务指标","计算KPI达成率","生成绩效看板"]},{"name":"知识产权监控","desc":"监控商标专利侵权风险","dept":"合规","model":"品牌型","type":"potential","platforms":["通用"],"platformCount":6,"sop":["检索侵权商品","收集证据材料","提交投诉维权"]},{"name":"系统监控","desc":"监控系统运行状态并告警","dept":"技术","model":"精铺型","type":"hot","platforms":["通用"],"platformCount":7,"sop":["采集系统指标","检测异常状态","触发告警通知"]},{"name":"库存预警","desc":"监控库存水位并自动发送预警通知","dept":"运营","model":"品牌型","type":"fast","platforms":["通用"],"platformCount":5,"sop":["监控库存水位","触发预警通知","生成补货单"]},{"name":"汇率监控","desc":"监控汇率变化并自动换汇","dept":"财务","model":"铺货型","type":"potential","platforms":["通用"],"platformCount":6,"sop":["读取财务数据","执行核算处理","生成财务报表"]},{"name":"供应商对账","desc":"自动核对供应商账单","dept":"供应链","model":"品牌型","type":"fast","platforms":["通用"],"platformCount":6,"sop":["下载平台账单","核对订单金额","输出差异报告"]},{"name":"售后工单同步","desc":"同步各平台售后工单到客服系统","dept":"客服","model":"精铺型","type":"fast","platforms":["通用"],"platformCount":7,"sop":["接收客户问题","分配处理人员","跟踪解决进度"]},{"name":"招聘信息同步","desc":"同步招聘网站简历到HR系统","dept":"人事","model":"铺货型","type":"potential","platforms":["通用"],"platformCount":6,"sop":["发布招聘信息","筛选简历","安排面试流程"]},{"name":"经营分析","desc":"自动生成经营分析图表","dept":"管理","model":"精铺型","type":"fast","platforms":["通用"],"platformCount":7,"sop":["汇总业务数据","生成管理报表","支持决策分析"]},{"name":"合规检查","desc":"自动检查商品合规性","dept":"合规","model":"品牌型","type":"hot","platforms":["通用"],"platformCount":7,"sop":["扫描业务数据","识别合规风险","输出整改建议"]},{"name":"API对接","desc":"自动对接第三方平台API","dept":"技术","model":"品牌型","type":"fast","platforms":["通用"],"platformCount":8,"sop":["读取接口文档","编写对接代码","测试接口联通"]},{"name":"关键词排名追踪","desc":"追踪关键词搜索排名变化","dept":"运营","model":"精铺型","type":"fast","platforms":["通用"],"platformCount":5,"sop":["采集业务数据","执行自动化操作","输出结果报告"]},{"name":"发票自动开具","desc":"根据订单信息自动开具发票","dept":"财务","model":"品牌型","type":"potential","platforms":["通用"],"platformCount":5,"sop":["读取开票信息","生成电子发票","发送至客户"]},{"name":"入库验收","desc":"自动记录入库信息并生成验收单","dept":"供应链","model":"铺货型","type":"hot","platforms":["通用"],"platformCount":7,"sop":["扫描入库商品","核对数量质量","更新库存记录"]},{"name":"满意度调查","desc":"自动发送满意度调查并汇总结果","dept":"客服","model":"品牌型","type":"hot","platforms":["通用"],"platformCount":7,"sop":["接收服务请求","执行处理流程","反馈处理结果"]},{"name":"培训记录管理","desc":"自动记录员工培训情况","dept":"人事","model":"铺货型","type":"fast","platforms":["通用"],"platformCount":5,"sop":["制定培训计划","通知参训人员","记录培训结果"]},{"name":"风险预警","desc":"监控经营风险并自动预警","dept":"管理","model":"精铺型","type":"hot","platforms":["通用"],"platformCount":6,"sop":["监控风险指标","触发预警机制","推送风险通知"]},{"name":"证书管理","desc":"管理各类证书有效期并提醒","dept":"合规","model":"品牌型","type":"fast","platforms":["通用"],"platformCount":6,"sop":["扫描合规数据","识别风险问题","输出合规报告"]},{"name":"脚本部署","desc":"自动部署RPA脚本到各终端","dept":"技术","model":"精品型","type":"fast","platforms":["通用"],"platformCount":7,"sop":["执行技术任务","验证执行结果","记录操作日志"]},{"name":"成本核算","desc":"自动计算商品成本和利润","dept":"财务","model":"铺货型","type":"fast","platforms":["通用"],"platformCount":6,"sop":["采集成本数据","分摊各项费用","输出成本报表"]},{"name":"质检报告生成","desc":"自动生成商品质检报告","dept":"供应链","model":"精铺型","type":"hot","platforms":["通用"],"platformCount":5,"sop":["抽检商品样本","记录质检结果","生成质检报告"]},{"name":"资金流水同步","desc":"同步各平台资金流水到财务系统","dept":"财务","model":"铺货型","type":"fast","platforms":["通用"],"platformCount":5,"sop":["读取财务数据","执行核算处理","生成财务报表"]},{"name":"竞品价格监控","desc":"自动抓取竞品价格变化并生成报告","dept":"运营","model":"精品型","type":"fast","platforms":["Temu","Shein","Allegro","Lazada"],"platformCount":4,"sop":["采集竞品价格数据","对比自身产品定价","生成调价建议报告"]},{"name":"退税申报","desc":"自动整理退税资料并提交申报","dept":"财务","model":"精品型","type":"hot","platforms":["亚马逊","eBay","Shein","Allegro"],"platformCount":4,"sop":["整理退税材料","计算退税金额","提交申报"]},{"name":"评论自动回复","desc":"根据评论内容自动生成回复","dept":"运营","model":"精品型","type":"hot","platforms":["美客多","TikTok Shop","eBay","Temu"],"platformCount":4,"sop":["采集业务数据","执行自动化操作","输出结果报告"]},{"name":"活动报名自动化","desc":"自动填写活动报名信息并提交","dept":"运营","model":"精品型","type":"fast","platforms":["亚马逊","沃尔玛","独立站","TikTok Shop"],"platformCount":4,"sop":["采集业务数据","执行自动化操作","输出结果报告"]},{"name":"商品信息同步","desc":"多平台商品信息自动同步更新","dept":"运营","model":"品牌型","type":"fast","platforms":["Temu","Shopee","沃尔玛"],"platformCount":3,"sop":["采集业务数据","执行自动化操作","输出结果报告"]},{"name":"销量数据汇总","desc":"自动汇总各平台销量数据","dept":"运营","model":"精铺型","type":"potential","platforms":["美客多","Allegro","亚马逊"],"platformCount":3,"sop":["采集业务数据","执行自动化操作","输出结果报告"]},{"name":"Listing自动上架","desc":"批量采集商品信息并自动创建Listing，支持多平台格式适配","dept":"运营","model":"品牌型","type":"hot","platforms":["沃尔玛"],"platformCount":1,"sop":["采集业务数据","执行自动化操作","输出结果报告"]},{"name":"关键词优化分析","desc":"分析竞品关键词表现，优化Listing标题和搜索词","dept":"运营","model":"铺货型","type":"hot","platforms":["Allegro","Shein","Lazada"],"platformCount":3,"sop":["抓取搜索热词数据","分析关键词表现","输出优化建议"]},{"name":"评论分析报告","desc":"自动采集分析商品评论，提取用户痛点和改进建议","dept":"运营","model":"品牌型","type":"hot","platforms":["沃尔玛","Shein","美客多"],"platformCount":3,"sop":["采集业务数据","执行自动化操作","输出结果报告"]},{"name":"竞品监控预警","desc":"实时监控竞品价格、库存、促销变化，自动预警","dept":"运营","model":"品牌型","type":"hot","platforms":["TikTok Shop","美客多"],"platformCount":2,"sop":["采集业务数据","执行自动化操作","输出结果报告"]},{"name":"促销活动配置","desc":"批量配置多平台促销活动，统一管理折扣力度","dept":"运营","model":"精铺型","type":"fast","platforms":["Temu"],"platformCount":1,"sop":["采集业务数据","执行自动化操作","输出结果报告"]},{"name":"广告投放优化","desc":"自动调整广告出价和预算，优化ROAS","dept":"运营","model":"精铺型","type":"potential","platforms":["速卖通","亚马逊","Temu"],"platformCount":3,"sop":["同步广告数据","计算ROI指标","生成投放报告"]},{"name":"类目排名追踪","desc":"追踪商品在类目排名变化，分析流量来源","dept":"运营","model":"精铺型","type":"potential","platforms":["Allegro","速卖通","独立站"],"platformCount":3,"sop":["采集业务数据","执行自动化操作","输出结果报告"]},{"name":"新品测款分析","desc":"自动化新品测款流程，快速验证市场反应","dept":"运营","model":"品牌型","type":"hot","platforms":["独立站","Lazada","Shein"],"platformCount":3,"sop":["采集业务数据","执行自动化操作","输出结果报告"]},{"name":"Listing质量检测","desc":"自动检测Listing完整度和合规性","dept":"运营","model":"精品型","type":"fast","platforms":["Temu","速卖通","沃尔玛"],"platformCount":3,"sop":["采集业务数据","执行自动化操作","输出结果报告"]},{"name":"选品数据采集","desc":"采集多平台热销商品数据，辅助选品决策","dept":"运营","model":"精铺型","type":"fast","platforms":["Temu","速卖通"],"platformCount":2,"sop":["采集业务数据","执行自动化操作","输出结果报告"]},{"name":"跟卖监控处理","desc":"监控跟卖情况并自动处理，保护Listing权益","dept":"运营","model":"铺货型","type":"fast","platforms":["美客多"],"platformCount":1,"sop":["采集业务数据","执行自动化操作","输出结果报告"]},{"name":"变体关系管理","desc":"自动管理商品变体关系，优化展示效果","dept":"运营","model":"铺货型","type":"fast","platforms":["TikTok Shop","亚马逊","速卖通"],"platformCount":3,"sop":["采集业务数据","执行自动化操作","输出结果报告"]},{"name":"FBA库存优化","desc":"分析FBA库存周转，优化补货计划","dept":"运营","model":"品牌型","type":"fast","platforms":["eBay","沃尔玛"],"platformCount":2,"sop":["采集业务数据","执行自动化操作","输出结果报告"]},{"name":"站内信自动回复","desc":"自动识别客户咨询类型并回复","dept":"运营","model":"铺货型","type":"fast","platforms":["独立站","Shein","eBay"],"platformCount":3,"sop":["采集业务数据","执行自动化操作","输出结果报告"]},{"name":"订单备注同步","desc":"同步订单备注信息到ERP系统","dept":"运营","model":"精品型","type":"potential","platforms":["OZON"],"platformCount":1,"sop":["采集业务数据","执行自动化操作","输出结果报告"]},{"name":"收支明细统计","desc":"自动统计各平台收支明细，生成财务报表","dept":"财务","model":"精铺型","type":"fast","platforms":["沃尔玛","Temu","Allegro"],"platformCount":3,"sop":["读取财务数据","执行核算处理","生成财务报表"]},{"name":"平台对账核验","desc":"自动核对平台账单与实际收款差异","dept":"财务","model":"品牌型","type":"potential","platforms":["亚马逊"],"platformCount":1,"sop":["下载平台账单","核对订单金额","输出差异报告"]},{"name":"费用分摊计算","desc":"自动计算各项费用分摊到SKU的成本","dept":"财务","model":"铺货型","type":"hot","platforms":["亚马逊","TikTok Shop"],"platformCount":2,"sop":["读取财务数据","执行核算处理","生成财务报表"]},{"name":"退款订单处理","desc":"自动处理退款订单，更新财务数据","dept":"财务","model":"精品型","type":"fast","platforms":["Allegro"],"platformCount":1,"sop":["同步订单数据","匹配物流信息","更新订单状态"]},{"name":"汇率损益计算","desc":"计算汇率波动带来的损益","dept":"财务","model":"精品型","type":"fast","platforms":["Lazada","TikTok Shop"],"platformCount":2,"sop":["读取财务数据","执行核算处理","生成财务报表"]},{"name":"账户余额监控","desc":"监控各平台账户余额，预警资金风险","dept":"财务","model":"铺货型","type":"fast","platforms":["Allegro","Lazada"],"platformCount":2,"sop":["读取财务数据","执行核算处理","生成财务报表"]},{"name":"发票管理自动化","desc":"自动开具和管理各平台发票","dept":"财务","model":"精品型","type":"hot","platforms":["独立站","TikTok Shop","Allegro"],"platformCount":3,"sop":["读取开票信息","生成电子发票","发送至客户"]},{"name":"利润分析报表","desc":"自动生成多维度利润分析报表","dept":"财务","model":"铺货型","type":"potential","platforms":["OZON"],"platformCount":1,"sop":["汇总收支数据","计算利润率","生成分析报告"]},{"name":"预算执行监控","desc":"监控各部门预算执行情况","dept":"财务","model":"品牌型","type":"potential","platforms":["Shein","Shopee","速卖通"],"platformCount":3,"sop":["读取财务数据","执行核算处理","生成财务报表"]},{"name":"应收账款管理","desc":"自动管理应收账款，提醒回款","dept":"财务","model":"品牌型","type":"fast","platforms":["Shein","Allegro","Shopee"],"platformCount":3,"sop":["读取财务数据","执行核算处理","生成财务报表"]},{"name":"采购需求预测","desc":"基于销量预测采购需求，优化库存","dept":"供应链","model":"品牌型","type":"fast","platforms":["Lazada","OZON","速卖通"],"platformCount":3,"sop":["分析库存需求","生成采购单","跟踪到货状态"]},{"name":"供应商绩效评估","desc":"自动评估供应商交期、质量等绩效","dept":"供应链","model":"品牌型","type":"hot","platforms":["沃尔玛","美客多","Shein"],"platformCount":3,"sop":["采集绩效数据","计算考核得分","生成绩效报告"]},{"name":"采购订单跟踪","desc":"自动跟踪采购订单状态，预警延期","dept":"供应链","model":"铺货型","type":"hot","platforms":["亚马逊","Shein","TikTok Shop"],"platformCount":3,"sop":["分析库存需求","生成采购单","跟踪到货状态"]},{"name":"库存周转分析","desc":"分析库存周转率，识别滞销品","dept":"供应链","model":"精品型","type":"fast","platforms":["TikTok Shop","Shein"],"platformCount":2,"sop":["采集供应链数据","执行业务流程","更新系统状态"]},{"name":"多仓调拨优化","desc":"优化多仓库库存调拨策略","dept":"供应链","model":"品牌型","type":"hot","platforms":["TikTok Shop","Shein","沃尔玛"],"platformCount":3,"sop":["采集供应链数据","执行业务流程","更新系统状态"]},{"name":"质检流程自动化","desc":"自动化质检流程，提高验收效率","dept":"供应链","model":"精品型","type":"fast","platforms":["eBay","TikTok Shop"],"platformCount":2,"sop":["抽检商品样本","记录质检结果","生成质检报告"]},{"name":"物流成本分析","desc":"分析各渠道物流成本，优化配送","dept":"供应链","model":"品牌型","type":"potential","platforms":["速卖通","沃尔玛"],"platformCount":2,"sop":["采集供应链数据","执行业务流程","更新系统状态"]},{"name":"退货入库处理","desc":"自动化退货入库流程","dept":"供应链","model":"品牌型","type":"hot","platforms":["OZON","美客多","Temu"],"platformCount":3,"sop":["扫描入库商品","核对数量质量","更新库存记录"]},{"name":"包装材料管理","desc":"管理包装材料库存，自动补货","dept":"供应链","model":"品牌型","type":"potential","platforms":["Temu"],"platformCount":1,"sop":["采集供应链数据","执行业务流程","更新系统状态"]},{"name":"供应商对账自动化","desc":"自动与供应商对账结算","dept":"供应链","model":"铺货型","type":"fast","platforms":["OZON","Lazada","TikTok Shop"],"platformCount":3,"sop":["下载平台账单","核对订单金额","输出差异报告"]},{"name":"工单自动分配","desc":"根据工单类型自动分配给对应客服","dept":"客服","model":"精铺型","type":"hot","platforms":["Shein","Allegro"],"platformCount":2,"sop":["接收客户问题","分配处理人员","跟踪解决进度"]},{"name":"常见问题自动回复","desc":"自动识别常见问题并回复解决方案","dept":"客服","model":"精铺型","type":"hot","platforms":["Allegro","OZON","Shopee"],"platformCount":3,"sop":["接收服务请求","执行处理流程","反馈处理结果"]},{"name":"投诉升级处理","desc":"自动识别投诉等级并升级处理","dept":"客服","model":"精品型","type":"potential","platforms":["Shopee","独立站"],"platformCount":2,"sop":["接收服务请求","执行处理流程","反馈处理结果"]},{"name":"评价管理回复","desc":"自动回复商品评价，维护店铺评分","dept":"客服","model":"品牌型","type":"potential","platforms":["eBay","Temu","Allegro"],"platformCount":3,"sop":["接收服务请求","执行处理流程","反馈处理结果"]},{"name":"退款申请处理","desc":"自动化退款申请审核处理","dept":"客服","model":"铺货型","type":"hot","platforms":["独立站"],"platformCount":1,"sop":["接收服务请求","执行处理流程","反馈处理结果"]},{"name":"换货流程处理","desc":"自动化换货申请处理流程","dept":"客服","model":"铺货型","type":"potential","platforms":["独立站"],"platformCount":1,"sop":["接收服务请求","执行处理流程","反馈处理结果"]},{"name":"客服绩效统计","desc":"自动统计客服响应时效、解决率等绩效","dept":"客服","model":"品牌型","type":"hot","platforms":["速卖通","沃尔玛","美客多"],"platformCount":3,"sop":["采集绩效数据","计算考核得分","生成绩效报告"]},{"name":"客户标签管理","desc":"自动为客户打标签，支持精准服务","dept":"客服","model":"铺货型","type":"fast","platforms":["Shein"],"platformCount":1,"sop":["接收服务请求","执行处理流程","反馈处理结果"]},{"name":"VIP客户服务","desc":"VIP客户专属服务流程","dept":"客服","model":"精品型","type":"fast","platforms":["TikTok Shop","Temu"],"platformCount":2,"sop":["接收服务请求","执行处理流程","反馈处理结果"]},{"name":"多语言客服支持","desc":"自动翻译客户消息，支持多语言服务","dept":"客服","model":"铺货型","type":"fast","platforms":["OZON","TikTok Shop"],"platformCount":2,"sop":["接收服务请求","执行处理流程","反馈处理结果"]},{"name":"招聘流程自动化","desc":"自动化招聘流程，提高招聘效率","dept":"人事","model":"品牌型","type":"hot","platforms":["Lazada","亚马逊","速卖通"],"platformCount":3,"sop":["发布招聘信息","筛选简历","安排面试流程"]},{"name":"入职办理自动化","desc":"自动化新员工入职办理流程","dept":"人事","model":"铺货型","type":"hot","platforms":["Shopee"],"platformCount":1,"sop":["收集入职材料","开通系统账号","安排入职培训"]},{"name":"离职流程管理","desc":"自动化离职办理流程","dept":"人事","model":"品牌型","type":"potential","platforms":["Lazada","OZON","Shopee"],"platformCount":3,"sop":["处理交接事项","关闭系统权限","结算薪酬"]},{"name":"培训计划管理","desc":"自动化培训计划执行跟踪","dept":"人事","model":"精品型","type":"fast","platforms":["Temu","eBay","TikTok Shop"],"platformCount":3,"sop":["制定培训计划","通知参训人员","记录培训结果"]},{"name":"绩效考核统计","desc":"自动统计员工绩效考核数据","dept":"人事","model":"精品型","type":"hot","platforms":["TikTok Shop","美客多"],"platformCount":2,"sop":["采集绩效数据","计算考核得分","生成绩效报告"]},{"name":"加班统计管理","desc":"自动统计员工加班时长","dept":"人事","model":"精铺型","type":"potential","platforms":["TikTok Shop","美客多"],"platformCount":2,"sop":["采集人事数据","执行人事流程","生成人事报表"]},{"name":"社保公积金管理","desc":"自动化社保公积金缴纳管理","dept":"人事","model":"铺货型","type":"hot","platforms":["Shein","OZON","eBay"],"platformCount":3,"sop":["采集人事数据","执行人事流程","生成人事报表"]},{"name":"员工档案管理","desc":"自动化员工档案维护","dept":"人事","model":"精铺型","type":"hot","platforms":["Shein"],"platformCount":1,"sop":["采集人事数据","执行人事流程","生成人事报表"]},{"name":"团建活动组织","desc":"自动化团建活动组织流程","dept":"人事","model":"精铺型","type":"hot","platforms":["亚马逊","Temu","Allegro"],"platformCount":3,"sop":["采集人事数据","执行人事流程","生成人事报表"]},{"name":"员工关怀提醒","desc":"自动提醒员工生日、入职周年等","dept":"人事","model":"精品型","type":"fast","platforms":["美客多"],"platformCount":1,"sop":["采集人事数据","执行人事流程","生成人事报表"]},{"name":"经营数据看板","desc":"自动生成经营数据看板","dept":"管理","model":"精品型","type":"hot","platforms":["Shopee"],"platformCount":1,"sop":["汇总业务数据","生成管理报表","支持决策分析"]},{"name":"目标进度跟踪","desc":"自动跟踪各部门目标完成进度","dept":"管理","model":"精品型","type":"potential","platforms":["Shopee","Allegro"],"platformCount":2,"sop":["汇总业务数据","生成管理报表","支持决策分析"]},{"name":"会议纪要生成","desc":"自动生成会议纪要并分发","dept":"管理","model":"精铺型","type":"potential","platforms":["Shopee","亚马逊","Lazada"],"platformCount":3,"sop":["整理会议议题","发送会议通知","记录会议纪要"]},{"name":"项目进度管理","desc":"自动跟踪项目进度，预警延期","dept":"管理","model":"精品型","type":"fast","platforms":["独立站","美客多"],"platformCount":2,"sop":["汇总业务数据","生成管理报表","支持决策分析"]},{"name":"资源利用率分析","desc":"分析各部门资源利用效率","dept":"管理","model":"铺货型","type":"hot","platforms":["独立站","eBay"],"platformCount":2,"sop":["汇总业务数据","生成管理报表","支持决策分析"]},{"name":"决策支持分析","desc":"自动生成决策支持分析报告","dept":"管理","model":"精品型","type":"potential","platforms":["Allegro"],"platformCount":1,"sop":["汇总业务数据","生成管理报表","支持决策分析"]},{"name":"跨部门协作管理","desc":"自动化跨部门协作流程","dept":"管理","model":"精铺型","type":"fast","platforms":["Allegro","Shopee","OZON"],"platformCount":3,"sop":["汇总业务数据","生成管理报表","支持决策分析"]},{"name":"异常预警管理","desc":"自动识别业务异常并预警","dept":"管理","model":"精铺型","type":"hot","platforms":["OZON","Lazada"],"platformCount":2,"sop":["汇总业务数据","生成管理报表","支持决策分析"]},{"name":"报表自动生成","desc":"自动生成各类管理报表","dept":"管理","model":"精铺型","type":"fast","platforms":["美客多","Allegro","亚马逊"],"platformCount":3,"sop":["汇总业务数据","生成可视化报表","定时发送管理层"]},{"name":"审批流程自动化","desc":"自动化各类审批流程","dept":"管理","model":"精品型","type":"fast","platforms":["亚马逊"],"platformCount":1,"sop":["汇总业务数据","生成管理报表","支持决策分析"]},{"name":"平台规则监控","desc":"监控各平台规则变化，及时调整","dept":"合规","model":"品牌型","type":"hot","platforms":["eBay","速卖通","亚马逊"],"platformCount":3,"sop":["扫描合规数据","识别风险问题","输出合规报告"]},{"name":"知识产权检查","desc":"自动检查Listing知识产权风险","dept":"合规","model":"精品型","type":"fast","platforms":["速卖通","Temu","Shopee"],"platformCount":3,"sop":["检索侵权商品","收集证据材料","提交投诉维权"]},{"name":"数据隐私合规","desc":"确保数据处理符合隐私法规","dept":"合规","model":"精铺型","type":"potential","platforms":["Shein"],"platformCount":1,"sop":["扫描合规数据","识别风险问题","输出合规报告"]},{"name":"广告合规检查","desc":"检查广告内容合规性","dept":"合规","model":"精品型","type":"fast","platforms":["亚马逊"],"platformCount":1,"sop":["扫描业务数据","识别合规风险","输出整改建议"]},{"name":"税务合规管理","desc":"确保税务处理符合法规要求","dept":"合规","model":"品牌型","type":"fast","platforms":["独立站","Shopee","美客多"],"platformCount":3,"sop":["扫描合规数据","识别风险问题","输出合规报告"]},{"name":"产品认证管理","desc":"管理产品认证证书有效期","dept":"合规","model":"品牌型","type":"hot","platforms":["Shein"],"platformCount":1,"sop":["扫描合规数据","识别风险问题","输出合规报告"]},{"name":"进出口合规检查","desc":"检查进出口商品合规性","dept":"合规","model":"品牌型","type":"potential","platforms":["沃尔玛"],"platformCount":1,"sop":["扫描业务数据","识别合规风险","输出整改建议"]},{"name":"合同合规审查","desc":"自动审查合同条款合规性","dept":"合规","model":"品牌型","type":"hot","platforms":["TikTok Shop","沃尔玛"],"platformCount":2,"sop":["扫描合规数据","识别风险问题","输出合规报告"]},{"name":"反欺诈监控","desc":"监控异常交易，识别欺诈风险","dept":"合规","model":"精铺型","type":"hot","platforms":["亚马逊"],"platformCount":1,"sop":["扫描合规数据","识别风险问题","输出合规报告"]},{"name":"合规培训管理","desc":"自动化合规培训管理","dept":"合规","model":"精铺型","type":"hot","platforms":["OZON","Shein"],"platformCount":2,"sop":["制定培训计划","通知参训人员","记录培训结果"]},{"name":"API接口监控","desc":"监控各平台API接口稳定性","dept":"技术","model":"品牌型","type":"fast","platforms":["OZON","独立站","美客多"],"platformCount":3,"sop":["执行技术任务","验证执行结果","记录操作日志"]},{"name":"数据同步监控","desc":"监控数据同步任务执行状态","dept":"技术","model":"精铺型","type":"hot","platforms":["亚马逊","eBay"],"platformCount":2,"sop":["执行技术任务","验证执行结果","记录操作日志"]},{"name":"系统日志分析","desc":"自动分析系统日志，识别异常","dept":"技术","model":"精铺型","type":"potential","platforms":["eBay","TikTok Shop"],"platformCount":2,"sop":["执行技术任务","验证执行结果","记录操作日志"]},{"name":"自动化脚本维护","desc":"维护和更新RPA自动化脚本","dept":"技术","model":"品牌型","type":"fast","platforms":["速卖通","OZON","Allegro"],"platformCount":3,"sop":["执行技术任务","验证执行结果","记录操作日志"]},{"name":"数据库备份检查","desc":"自动检查数据库备份完整性","dept":"技术","model":"精铺型","type":"hot","platforms":["Allegro"],"platformCount":1,"sop":["执行技术任务","验证执行结果","记录操作日志"]},{"name":"性能监控分析","desc":"监控系统性能指标，优化效率","dept":"技术","model":"精铺型","type":"fast","platforms":["OZON","Temu","Allegro"],"platformCount":3,"sop":["执行技术任务","验证执行结果","记录操作日志"]},{"name":"安全漏洞扫描","desc":"定期扫描系统安全漏洞","dept":"技术","model":"精品型","type":"potential","platforms":["OZON"],"platformCount":1,"sop":["执行技术任务","验证执行结果","记录操作日志"]},{"name":"版本发布管理","desc":"自动化版本发布流程","dept":"技术","model":"铺货型","type":"fast","platforms":["OZON","Allegro","沃尔玛"],"platformCount":3,"sop":["执行技术任务","验证执行结果","记录操作日志"]},{"name":"接口文档维护","desc":"自动维护API接口文档","dept":"技术","model":"精品型","type":"hot","platforms":["Lazada"],"platformCount":1,"sop":["执行技术任务","验证执行结果","记录操作日志"]},{"name":"监控告警配置","desc":"配置和管理监控告警规则","dept":"技术","model":"精品型","type":"potential","platforms":["独立站"],"platformCount":1,"sop":["执行技术任务","验证执行结果","记录操作日志"]},{"name":"库存预警设置","desc":"自动设置库存预警阈值，及时补货","dept":"运营","model":"铺货型","type":"fast","platforms":["TikTok Shop","eBay"],"platformCount":2,"sop":["监控库存水位","触发预警通知","生成补货单"]},{"name":"价格弹性分析","desc":"分析价格变化对销量的影响","dept":"运营","model":"精品型","type":"hot","platforms":["亚马逊","TikTok Shop"],"platformCount":2,"sop":["采集业务数据","执行自动化操作","输出结果报告"]},{"name":"关联销售推荐","desc":"自动生成关联商品推荐","dept":"运营","model":"品牌型","type":"fast","platforms":["亚马逊","独立站","沃尔玛"],"platformCount":3,"sop":["采集业务数据","执行自动化操作","输出结果报告"]},{"name":"季节性备货分析","desc":"分析季节性商品备货时机","dept":"运营","model":"精品型","type":"fast","platforms":["eBay","Shopee"],"platformCount":2,"sop":["采集业务数据","执行自动化操作","输出结果报告"]},{"name":"Listing翻译优化","desc":"自动翻译并优化多语言Listing","dept":"运营","model":"精铺型","type":"potential","platforms":["独立站","Temu","eBay"],"platformCount":3,"sop":["采集业务数据","执行自动化操作","输出结果报告"]},{"name":"销量预测模型","desc":"基于历史数据预测未来销量","dept":"运营","model":"精铺型","type":"hot","platforms":["Shopee","OZON","亚马逊"],"platformCount":3,"sop":["采集业务数据","执行自动化操作","输出结果报告"]},{"name":"竞品价格策略分析","desc":"分析竞品定价策略","dept":"运营","model":"精品型","type":"hot","platforms":["沃尔玛"],"platformCount":1,"sop":["采集业务数据","执行自动化操作","输出结果报告"]},{"name":"流量来源分析","desc":"分析商品流量来源构成","dept":"运营","model":"铺货型","type":"fast","platforms":["沃尔玛","独立站"],"platformCount":2,"sop":["采集业务数据","执行自动化操作","输出结果报告"]},{"name":"成本结构分析","desc":"分析成本结构，识别优化空间","dept":"财务","model":"精铺型","type":"fast","platforms":["独立站"],"platformCount":1,"sop":["读取财务数据","执行核算处理","生成财务报表"]},{"name":"现金流预测","desc":"预测未来现金流状况","dept":"财务","model":"精品型","type":"potential","platforms":["Shein","独立站"],"platformCount":2,"sop":["读取财务数据","执行核算处理","生成财务报表"]},{"name":"多币种账户管理","desc":"自动化多币种账户管理","dept":"财务","model":"精铺型","type":"hot","platforms":["美客多"],"platformCount":1,"sop":["读取财务数据","执行核算处理","生成财务报表"]},{"name":"财务审计准备","desc":"自动准备财务审计材料","dept":"财务","model":"品牌型","type":"hot","platforms":["美客多","Temu"],"platformCount":2,"sop":["读取财务数据","执行核算处理","生成财务报表"]},{"name":"费用报销自动化","desc":"自动化费用报销流程","dept":"财务","model":"品牌型","type":"fast","platforms":["Shopee","速卖通"],"platformCount":2,"sop":["读取财务数据","执行核算处理","生成财务报表"]},{"name":"资金调拨优化","desc":"优化多账户资金调拨","dept":"财务","model":"铺货型","type":"hot","platforms":["亚马逊","Allegro"],"platformCount":2,"sop":["读取财务数据","执行核算处理","生成财务报表"]},{"name":"供应商风险评估","desc":"评估供应商供应风险","dept":"供应链","model":"精品型","type":"potential","platforms":["独立站","TikTok Shop"],"platformCount":2,"sop":["采集供应链数据","执行业务流程","更新系统状态"]},{"name":"物流时效分析","desc":"分析各物流渠道时效表现","dept":"供应链","model":"铺货型","type":"potential","platforms":["独立站","TikTok Shop"],"platformCount":2,"sop":["采集供应链数据","执行业务流程","更新系统状态"]},{"name":"库存成本优化","desc":"优化库存持有成本","dept":"供应链","model":"精品型","type":"fast","platforms":["Shein"],"platformCount":1,"sop":["采集供应链数据","执行业务流程","更新系统状态"]},{"name":"采购批量优化","desc":"优化采购批量降低成本","dept":"供应链","model":"精品型","type":"hot","platforms":["Shein"],"platformCount":1,"sop":["分析库存需求","生成采购单","跟踪到货状态"]},{"name":"供应链可视化","desc":"构建供应链可视化看板","dept":"供应链","model":"精铺型","type":"fast","platforms":["TikTok Shop"],"platformCount":1,"sop":["采集供应链数据","执行业务流程","更新系统状态"]},{"name":"应急采购管理","desc":"管理应急采购流程","dept":"供应链","model":"精品型","type":"hot","platforms":["美客多","Allegro","沃尔玛"],"platformCount":3,"sop":["分析库存需求","生成采购单","跟踪到货状态"]},{"name":"客服排班优化","desc":"优化客服排班提高效率","dept":"客服","model":"精品型","type":"potential","platforms":["Shein","OZON","速卖通"],"platformCount":3,"sop":["接收服务请求","执行处理流程","反馈处理结果"]},{"name":"客户满意度分析","desc":"分析客户满意度影响因素","dept":"客服","model":"铺货型","type":"potential","platforms":["美客多"],"platformCount":1,"sop":["接收服务请求","执行处理流程","反馈处理结果"]},{"name":"客服知识库维护","desc":"维护客服知识库内容","dept":"客服","model":"品牌型","type":"hot","platforms":["独立站","Shopee","Shein"],"platformCount":3,"sop":["接收服务请求","执行处理流程","反馈处理结果"]},{"name":"服务流程优化","desc":"优化客服服务流程","dept":"客服","model":"精品型","type":"fast","platforms":["Temu"],"platformCount":1,"sop":["分析现有流程","识别优化点","输出改进方案"]},{"name":"客户投诉分析","desc":"分析投诉原因和趋势","dept":"客服","model":"品牌型","type":"fast","platforms":["OZON","eBay"],"platformCount":2,"sop":["接收服务请求","执行处理流程","反馈处理结果"]},{"name":"客服质检自动化","desc":"自动化客服服务质量检测","dept":"客服","model":"铺货型","type":"potential","platforms":["Shopee","速卖通"],"platformCount":2,"sop":["抽检商品样本","记录质检结果","生成质检报告"]},{"name":"人才盘点分析","desc":"自动化人才盘点分析","dept":"人事","model":"品牌型","type":"fast","platforms":["美客多","eBay","Shein"],"platformCount":3,"sop":["采集人事数据","执行人事流程","生成人事报表"]},{"name":"薪酬竞争力分析","desc":"分析薪酬市场竞争力","dept":"人事","model":"铺货型","type":"hot","platforms":["Shein","Temu"],"platformCount":2,"sop":["采集人事数据","执行人事流程","生成人事报表"]},{"name":"员工满意度调查","desc":"自动化员工满意度调查","dept":"人事","model":"品牌型","type":"fast","platforms":["Shein","OZON"],"platformCount":2,"sop":["采集人事数据","执行人事流程","生成人事报表"]},{"name":"人力成本分析","desc":"分析人力成本构成","dept":"人事","model":"铺货型","type":"fast","platforms":["Lazada"],"platformCount":1,"sop":["采集人事数据","执行人事流程","生成人事报表"]},{"name":"继任者计划管理","desc":"管理关键岗位继任者计划","dept":"人事","model":"精铺型","type":"fast","platforms":["eBay","独立站","Allegro"],"platformCount":3,"sop":["采集人事数据","执行人事流程","生成人事报表"]},{"name":"员工流失预警","desc":"预测员工流失风险","dept":"人事","model":"铺货型","type":"fast","platforms":["美客多"],"platformCount":1,"sop":["采集人事数据","执行人事流程","生成人事报表"]},{"name":"战略执行跟踪","desc":"跟踪战略目标执行进度","dept":"管理","model":"品牌型","type":"potential","platforms":["Temu"],"platformCount":1,"sop":["汇总业务数据","生成管理报表","支持决策分析"]},{"name":"组织效能分析","desc":"分析组织运行效能","dept":"管理","model":"铺货型","type":"hot","platforms":["TikTok Shop","沃尔玛"],"platformCount":2,"sop":["汇总业务数据","生成管理报表","支持决策分析"]},{"name":"风险管控监测","desc":"监测企业运营风险","dept":"管理","model":"品牌型","type":"potential","platforms":["美客多","eBay"],"platformCount":2,"sop":["汇总业务数据","生成管理报表","支持决策分析"]},{"name":"投资回报分析","desc":"分析各项投资回报","dept":"管理","model":"铺货型","type":"hot","platforms":["美客多"],"platformCount":1,"sop":["汇总业务数据","生成管理报表","支持决策分析"]},{"name":"业务连续性管理","desc":"管理业务连续性计划","dept":"管理","model":"品牌型","type":"fast","platforms":["eBay","Lazada"],"platformCount":2,"sop":["汇总业务数据","生成管理报表","支持决策分析"]},{"name":"知识管理自动化","desc":"自动化企业知识管理","dept":"管理","model":"精铺型","type":"hot","platforms":["eBay"],"platformCount":1,"sop":["汇总业务数据","生成管理报表","支持决策分析"]},{"name":"合规风险评估","desc":"评估企业合规风险","dept":"合规","model":"铺货型","type":"fast","platforms":["TikTok Shop","Lazada","Shopee"],"platformCount":3,"sop":["扫描合规数据","识别风险问题","输出合规报告"]},{"name":"合规培训自动化","desc":"自动化合规培训管理","dept":"合规","model":"精品型","type":"potential","platforms":["Temu"],"platformCount":1,"sop":["制定培训计划","通知参训人员","记录培训结果"]},{"name":"违规行为监测","desc":"监测识别违规行为","dept":"合规","model":"品牌型","type":"potential","platforms":["美客多","Allegro"],"platformCount":2,"sop":["扫描合规数据","识别风险问题","输出合规报告"]},{"name":"合规审计支持","desc":"支持合规审计工作","dept":"合规","model":"品牌型","type":"potential","platforms":["美客多","速卖通"],"platformCount":2,"sop":["扫描合规数据","识别风险问题","输出合规报告"]},{"name":"政策变化跟踪","desc":"跟踪法规政策变化","dept":"合规","model":"品牌型","type":"fast","platforms":["TikTok Shop","速卖通"],"platformCount":2,"sop":["扫描合规数据","识别风险问题","输出合规报告"]},{"name":"合规文化建设","desc":"推进合规文化建设","dept":"合规","model":"品牌型","type":"potential","platforms":["TikTok Shop"],"platformCount":1,"sop":["扫描合规数据","识别风险问题","输出合规报告"]},{"name":"容量规划管理","desc":"管理系统容量规划","dept":"技术","model":"精品型","type":"fast","platforms":["独立站","沃尔玛","Allegro"],"platformCount":3,"sop":["执行技术任务","验证执行结果","记录操作日志"]},{"name":"故障自动恢复","desc":"自动化故障恢复流程","dept":"技术","model":"精铺型","type":"potential","platforms":["速卖通"],"platformCount":1,"sop":["执行技术任务","验证执行结果","记录操作日志"]},{"name":"代码质量检测","desc":"自动化代码质量检测","dept":"技术","model":"铺货型","type":"hot","platforms":["沃尔玛","速卖通"],"platformCount":2,"sop":["执行技术任务","验证执行结果","记录操作日志"]},{"name":"测试自动化管理","desc":"管理自动化测试流程","dept":"技术","model":"品牌型","type":"hot","platforms":["沃尔玛","美客多","OZON"],"platformCount":3,"sop":["执行技术任务","验证执行结果","记录操作日志"]},{"name":"技术债务管理","desc":"管理技术债务清理","dept":"技术","model":"品牌型","type":"fast","platforms":["Allegro","TikTok Shop","Lazada"],"platformCount":3,"sop":["执行技术任务","验证执行结果","记录操作日志"]},{"name":"灾备演练自动化","desc":"自动化灾备演练","dept":"技术","model":"精铺型","type":"hot","platforms":["Temu","沃尔玛"],"platformCount":2,"sop":["执行技术任务","验证执行结果","记录操作日志"]}];
+    
+    // 初始化筛选器
+    const depts = [...new Set(SCENARIOS.map(s => s.dept))].sort();
+    const platforms = [...new Set(SCENARIOS.flatMap(s => s.platforms))].sort();
+    
+    const deptSelect = document.getElementById('deptFilter');
+    const platformSelect = document.getElementById('platformFilter');
+    
+    depts.forEach(d => {
+      const opt = document.createElement('option');
+      opt.value = d;
+      opt.textContent = d;
+      deptSelect.appendChild(opt);
+    });
+    
+    platforms.forEach(p => {
+      const opt = document.createElement('option');
+      opt.value = p;
+      opt.textContent = p;
+      platformSelect.appendChild(opt);
+    });
+    
+    function render() {
+      const dept = deptSelect.value;
+      const platform = platformSelect.value;
+      const type = document.getElementById('typeFilter').value;
+      const search = document.getElementById('searchInput').value.toLowerCase();
+      
+      const filtered = SCENARIOS.filter(s => {
+        if (dept && s.dept !== dept) return false;
+        if (platform && !s.platforms.includes(platform)) return false;
+        if (type && s.type !== type) return false;
+        if (search && !s.name.toLowerCase().includes(search) && !s.desc.toLowerCase().includes(search)) return false;
+        return true;
+      });
+      
+      const grid = document.getElementById('scenarioGrid');
+      grid.innerHTML = filtered.map((s, i) => `
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">${escapeHtml(s.name)}</div>
+          </div>
+          <div class="card-badges" style="margin-bottom: 10px;">
+            <span class="badge badge-dept">${escapeHtml(s.dept)}</span>
+            <span class="badge badge-model">${escapeHtml(s.model)}</span>
+            <span class="badge badge-type">${getTypeLabel(s.type)}</span>
+          </div>
+          <div class="card-desc">${escapeHtml(s.desc)}</div>
+          <div class="card-badges" style="margin-bottom: 10px;">
+            <span class="badge badge-platforms">${s.platformCount}个平台</span>
+          </div>
+          <button class="sop-toggle" onclick="toggleSop(${i})">查看SOP (${s.sop.length}步)</button>
+          <div class="sop-content" id="sop${i}">
+            ${s.sop.map((step, j) => `
+              <div class="sop-step">
+                <div class="step-num">${j+1}</div>
+                <div class="step-text">${escapeHtml(step)}</div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `).join('');
+    }
+    
+    function escapeHtml(str) {
+      return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+    
+    function getTypeLabel(type) {
+      const labels = { hot: '热门', fast: '快速见效', potential: '潜力场景' };
+      return labels[type] || type;
+    }
+    
+    function toggleSop(index) {
+      const el = document.getElementById('sop' + index);
+      el.classList.toggle('show');
+    }
+    
+    deptSelect.addEventListener('change', render);
+    platformSelect.addEventListener('change', render);
+    document.getElementById('typeFilter').addEventListener('change', render);
+    document.getElementById('searchInput').addEventListener('input', render);
+    
+    render();
+  </script>
+</body>
+</html>

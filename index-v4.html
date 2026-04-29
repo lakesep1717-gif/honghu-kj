@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>跨境电商RPA场景库</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      color: #262626;
+      font-size: 14px;
+    }
+    
+    /* Container */
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+    
+    /* Header */
+    .header {
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(10px);
+      border-radius: 16px;
+      padding: 24px 32px;
+      margin-bottom: 24px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+    }
+    .header-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    .header-brand {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .header-icon {
+      width: 56px;
+      height: 56px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+    }
+    .header-title h1 {
+      font-size: 24px;
+      font-weight: 700;
+      color: #1a1a1a;
+      margin-bottom: 4px;
+    }
+    .header-title p {
+      font-size: 14px;
+      color: #666;
+    }
+    .header-stats {
+      display: flex;
+      gap: 32px;
+    }
+    .stat-card {
+      text-align: center;
+      padding: 12px 24px;
+      background: linear-gradient(135deg, #f5f7fa 0%, #fff 100%);
+      border-radius: 12px;
+      min-width: 100px;
+    }
+    .stat-value {
+      font-size: 32px;
+      font-weight: 700;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .stat-label {
+      font-size: 13px;
+      color: #666;
+      margin-top: 4px;
+    }
+    
+    /* Filters */
+    .filters {
+      display: flex;
+      gap: 24px;
+      align-items: center;
+      flex-wrap: wrap;
+      padding-top: 20px;
+      border-top: 1px solid #e8e8e8;
+    }
+    .filter-section {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .filter-label {
+      font-size: 12px;
+      color: #999;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .filter-options {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .filter-btn {
+      padding: 8px 16px;
+      border: 2px solid #e8e8e8;
+      background: #fff;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 13px;
+      color: #666;
+      transition: all 0.2s;
+      font-weight: 500;
+    }
+    .filter-btn:hover {
+      border-color: #667eea;
+      color: #667eea;
+    }
+    .filter-btn.active {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: #fff;
+      border-color: transparent;
+      box-shadow: 0 4px 12px rgba(102,126,234,0.4);
+    }
+    .search-box {
+      margin-left: auto;
+      position: relative;
+    }
+    .search-box input {
+      width: 280px;
+      padding: 12px 16px 12px 44px;
+      border: 2px solid #e8e8e8;
+      border-radius: 12px;
+      font-size: 14px;
+      background: #fff;
+      transition: all 0.2s;
+    }
+    .search-box input:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 0 4px rgba(102,126,234,0.1);
+    }
+    .search-box::before {
+      content: "🔍";
+      position: absolute;
+      left: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 16px;
+    }
+    
+    /* Main Content */
+    .main {
+      display: flex;
+      gap: 24px;
+    }
+    
+    /* Sidebar */
+    .sidebar {
+      width: 260px;
+      flex-shrink: 0;
+    }
+    .sidebar-card {
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(10px);
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+    }
+    .sidebar-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: #999;
+      margin-bottom: 16px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .dept-list {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .dept-item {
+      display: flex;
+      align-items: center;
+      padding: 12px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .dept-item:hover {
+      background: #f5f7fa;
+    }
+    .dept-item.active {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: #fff;
+      box-shadow: 0 4px 12px rgba(102,126,234,0.4);
+    }
+    .dept-icon {
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 12px;
+      font-size: 18px;
+      background: rgba(0,0,0,0.05);
+      border-radius: 8px;
+    }
+    .dept-item.active .dept-icon {
+      background: rgba(255,255,255,0.2);
+    }
+    .dept-info { flex: 1; }
+    .dept-name { font-size: 14px; font-weight: 500; }
+    .dept-count {
+      font-size: 12px;
+      color: #999;
+      margin-top: 2px;
+    }
+    .dept-item.active .dept-count { color: rgba(255,255,255,0.8); }
+    
+    /* Content */
+    .content {
+      flex: 1;
+    }
+    .content-card {
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(10px);
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+    }
+    .content-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    .content-title {
+      font-size: 18px;
+      font-weight: 600;
+    }
+    .content-count {
+      font-size: 14px;
+      color: #666;
+    }
+    .content-count span {
+      color: #667eea;
+      font-weight: 600;
+    }
+    
+    /* Scenario Cards */
+    .scenario-list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .scenario-card {
+      background: #fff;
+      border: 2px solid #f0f0f0;
+      border-radius: 12px;
+      padding: 20px;
+      transition: all 0.2s;
+    }
+    .scenario-card:hover {
+      border-color: #667eea;
+      box-shadow: 0 4px 20px rgba(102,126,234,0.15);
+    }
+    .scenario-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 12px;
+    }
+    .scenario-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: #1a1a1a;
+    }
+    .scenario-tags {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .tag {
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+    .tag-platform { background: #e6f7ff; color: #1890ff; }
+    .tag-model { background: #f6ffed; color: #52c41a; }
+    .tag-type-hot { background: linear-gradient(135deg, #ff4d4f 0%, #ff7875 100%); color: #fff; }
+    .tag-type-fast { background: linear-gradient(135deg, #fa8c16 0%, #ffc53d 100%); color: #fff; }
+    .tag-type-potential { background: linear-gradient(135deg, #722ed1 0%, #b37feb 100%); color: #fff; }
+    
+    .scenario-desc {
+      color: #666;
+      font-size: 14px;
+      line-height: 1.6;
+      margin-bottom: 16px;
+    }
+    
+    /* Value Props */
+    .value-props {
+      display: flex;
+      gap: 20px;
+      padding: 16px;
+      background: linear-gradient(135deg, #f5f7fa 0%, #fff 100%);
+      border-radius: 10px;
+      margin-bottom: 16px;
+    }
+    .value-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+    }
+    .value-icon { font-size: 18px; }
+    .value-text { color: #666; }
+    .value-highlight {
+      background: linear-gradient(135deg, #52c41a 0%, #95de64 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      font-weight: 600;
+    }
+    
+    /* SOP Section */
+    .sop-section {
+      border-top: 1px solid #f0f0f0;
+      padding-top: 16px;
+    }
+    .sop-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+    }
+    .sop-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: #667eea;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .sop-toggle {
+      font-size: 12px;
+      color: #999;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .sop-content {
+      display: none;
+      margin-top: 16px;
+      padding: 20px;
+      background: #fafafa;
+      border-radius: 10px;
+    }
+    .sop-content.show { display: block; }
+    .sop-step {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    .sop-step:last-child { margin-bottom: 0; }
+    .sop-step-num {
+      width: 28px;
+      height: 28px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: #fff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 600;
+      flex-shrink: 0;
+    }
+    .sop-step-text {
+      flex: 1;
+      padding-top: 4px;
+      color: #666;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+    
+    /* Empty State */
+    .empty-state {
+      text-align: center;
+      padding: 60px;
+      color: #999;
+    }
+    .empty-state .icon { font-size: 64px; margin-bottom: 16px; }
+    .empty-state h3 { font-size: 18px; margin-bottom: 8px; color: #666; }
+    .empty-state p { font-size: 14px; }
+    
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #d9d9d9; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #bfbfbf; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <div class="header">
+      <div class="header-top">
+        <div class="header-brand">
+          <div class="header-icon">🚀</div>
+          <div class="header-title">
+            <h1>跨境电商RPA场景库</h1>
+            <p>301个自动化机会点 · 13个平台 · 8大部门</p>
+          </div>
+        </div>
+        <div class="header-stats">
+          <div class="stat-card">
+            <div class="stat-value" id="statCount">301</div>
+            <div class="stat-label">场景总数</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="statPlat">13</div>
+            <div class="stat-label">覆盖平台</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value">2-4h</div>
+            <div class="stat-label">日均节省</div>
+          </div>
+        </div>
+      </div>
+      <div class="filters">
+        <div class="filter-section">
+          <div class="filter-label">平台筛选</div>
+          <div class="filter-options" id="platformFilters"></div>
+        </div>
+        <div class="filter-section">
+          <div class="filter-label">业务模式</div>
+          <div class="filter-options" id="modelFilters"></div>
+        </div>
+        <div class="search-box">
+          <input type="text" id="searchInput" placeholder="搜索场景名称、关键词...">
+        </div>
+      </div>
+    </div>
+    
+    <!-- Main -->
+    <div class="main">
+      <!-- Sidebar -->
+      <div class="sidebar">
+        <div class="sidebar-card">
+          <div class="sidebar-title">部门导航</div>
+          <div class="dept-list" id="deptSidebar"></div>
+        </div>
+      </div>
+      
+      <!-- Content -->
+      <div class="content">
+        <div class="content-card">
+          <div class="content-header">
+            <div class="content-title" id="contentTitle">全部场景</div>
+            <div class="content-count">共 <span id="contentCount">301</span> 个场景</div>
+          </div>
+          <div class="scenario-list" id="scenarioList"></div>
+          <div class="empty-state" id="emptyState" style="display:none;">
+            <div class="icon">🔎</div>
+            <h3>没有找到匹配的场景</h3>
+            <p>试试调整筛选条件或搜索关键词</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+// Data
+const DEPTS = [
+  {name:"全部", icon:"🏢"},
+  {name:"运营", icon:"📈"},
+  {name:"财务", icon:"💰"},
+  {name:"供应链", icon:"📦"},
+  {name:"客服", icon:"💬"},
+  {name:"人事", icon:"👥"},
+  {name:"管理", icon:"⚙️"},
+  {name:"合规", icon:"🛡️"},
+  {name:"技术", icon:"🔧"},
+];
+
+const PLATFORMS = ["全部", "亚马逊", "Temu", "Shein", "TikTok", "沃尔玛", "eBay", "速卖通", "Shopee", "Lazada", "美客多", "OZON", "Allegro", "通用"];
+const MODELS = ["全部", "品牌型", "精品型", "精铺型", "铺货型", "通用"];
+
+// Sample data with SOP
+const SCENARIOS = [
+  {name:"商品详情批量采集", desc:"批量采集竞品ASIN的标题、价格、评分、问答数等核心数据，一键生成竞品分析表", platform:"亚马逊", model:"品牌型", type:"hot", dept:"运营", saveTime:"每天节省2-3小时", saveCost:"减少1名专员", efficiency:"效率提升10倍", sop:["读取ASIN列表","打开详情页抓取数据","提取标题/价格/评分/问答数","保存到Excel生成报告"]},
+  {name:"关键词排名监控", desc:"每日自动监控核心关键词的自然排名和广告排名变化，追踪SEO效果", platform:"亚马逊", model:"品牌型", type:"hot", dept:"运营", saveTime:"每天节省1.5小时", saveCost:"", efficiency:"数据准确率100%", sop:["读取关键词列表","逐个搜索记录排名","对比历史数据","生成排名趋势表"]},
+  {name:"跟卖监控与投诉", desc:"24小时监控跟卖，发现后自动发起投诉，保护Listing", platform:"亚马逊", model:"品牌型", type:"hot", dept:"运营", saveTime:"7×24小时监控", saveCost:"减少损失", efficiency:"响应<5分钟", sop:["扫描产品Listing","识别跟卖卖家","记录跟卖信息","自动发起投诉"]},
+  {name:"广告数据日报", desc:"每日自动导出广告报表，汇总花费、点击、转化数据，计算ACOS", platform:"亚马逊", model:"品牌型", type:"fast", dept:"财务", saveTime:"每天节省1小时", saveCost:"", efficiency:"零人工误差", sop:["登录广告后台","导出昨日数据","计算ACOS/ROAS","发送日报邮件"]},
+  {name:"FBA库存预警", desc:"自动监控FBA库存，低于安全库存自动发邮件通知采购补货", platform:"亚马逊", model:"品牌型", type:"hot", dept:"供应链", saveTime:"每天节省2小时", saveCost:"避免断货", efficiency:"预警率100%", sop:["登录后台导出库存","对比安全库存阈值","识别低库存SKU","发送预警邮件"]},
+  {name:"评价监控与预警", desc:"实时监控新增Review，差评自动预警，快速响应处理", platform:"亚马逊", model:"品牌型", type:"fast", dept:"客服", saveTime:"实时响应", saveCost:"提升满意度", efficiency:"时效提升80%", sop:["读取产品列表","抓取最新Review","识别差评(<3星)","发送预警通知"]},
+];
+
+// State
+let activeDept = "全部";
+let activePlatform = "全部";
+let activeModel = "全部";
+let searchKeyword = "";
+
+// Render
+function render() {
+  // Filter
+  let filtered = SCENARIOS.filter(s => {
+    if (activeDept !== "全部" && s.dept !== activeDept) return false;
+    if (activePlatform !== "全部" && s.platform !== activePlatform) return false;
+    if (activeModel !== "全部" && s.model !== activeModel) return false;
+    if (searchKeyword) {
+      const kw = searchKeyword.toLowerCase();
+      const text = [s.name, s.desc, s.platform, s.dept, s.model].join(' ').toLowerCase();
+      if (!text.includes(kw)) return false;
+    }
+    return true;
+  });
+  
+  // Update stats
+  document.getElementById('statCount').textContent = filtered.length;
+  document.getElementById('statPlat').textContent = new Set(filtered.map(s => s.platform)).size;
+  document.getElementById('contentCount').textContent = filtered.length;
+  document.getElementById('contentTitle').textContent = activeDept === "全部" ? "全部场景" : activeDept + "场景";
+  
+  // Render list
+  const listEl = document.getElementById('scenarioList');
+  const emptyEl = document.getElementById('emptyState');
+  
+  if (filtered.length === 0) {
+    listEl.innerHTML = '';
+    emptyEl.style.display = 'block';
+  } else {
+    emptyEl.style.display = 'none';
+    listEl.innerHTML = filtered.map((s, i) => renderScenarioCard(s, i)).join('');
+  }
+}
+
+function renderScenarioCard(s, idx) {
+  const typeClass = s.type === 'hot' ? 'tag-type-hot' : s.type === 'fast' ? 'tag-type-fast' : 'tag-type-potential';
+  const typeText = s.type === 'hot' ? '🔥高频刚需' : s.type === 'fast' ? '⚡提效显著' : '🌱潜力场景';
+  
+  return `
+    <div class="scenario-card">
+      <div class="scenario-header">
+        <div class="scenario-title">${s.name}</div>
+        <div class="scenario-tags">
+          <span class="tag tag-platform">${s.platform}</span>
+          <span class="tag tag-model">${s.model}</span>
+          <span class="tag ${typeClass}">${typeText}</span>
+        </div>
+      </div>
+      <div class="scenario-desc">${s.desc}</div>
+      <div class="value-props">
+        ${s.saveTime ? `<div class="value-item"><span class="value-icon">⏱️</span><span class="value-text">${s.saveTime}</span></div>` : ''}
+        ${s.saveCost ? `<div class="value-item"><span class="value-icon">💰</span><span class="value-highlight">${s.saveCost}</span></div>` : ''}
+        ${s.efficiency ? `<div class="value-item"><span class="value-icon">📈</span><span class="value-highlight">${s.efficiency}</span></div>` : ''}
+      </div>
+      <div class="sop-section">
+        <div class="sop-header" onclick="toggleSop(${idx})">
+          <div class="sop-title">📋 查看实现步骤 (SOP)</div>
+          <div class="sop-toggle">展开 <span id="arrow-${idx}">▼</span></div>
+        </div>
+        <div class="sop-content" id="sop-${idx}">
+          ${s.sop.map((step, i) => `
+            <div class="sop-step">
+              <div class="sop-step-num">${i+1}</div>
+              <div class="sop-step-text">${step}</div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function toggleSop(idx) {
+  const content = document.getElementById(`sop-${idx}`);
+  const arrow = document.getElementById(`arrow-${idx}`);
+  const isShow = content.classList.toggle('show');
+  arrow.textContent = isShow ? '▲' : '▼';
+}
+
+// Sidebar
+function renderSidebar() {
+  const counts = {};
+  DEPTS.forEach(d => counts[d.name] = 0);
+  SCENARIOS.forEach(s => { if(counts[s.dept] !== undefined) counts[s.dept]++; });
+  counts["全部"] = SCENARIOS.length;
+  
+  document.getElementById('deptSidebar').innerHTML = DEPTS.map(d => `
+    <div class="dept-item ${d.name === activeDept ? 'active' : ''}" onclick="setDept('${d.name}')">
+      <div class="dept-icon">${d.icon}</div>
+      <div class="dept-info">
+        <div class="dept-name">${d.name}</div>
+        <div class="dept-count">${counts[d.name]} 个场景</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+// Filters
+function renderFilters() {
+  document.getElementById('platformFilters').innerHTML = PLATFORMS.map(p => `
+    <button class="filter-btn ${p === activePlatform ? 'active' : ''}" onclick="setPlatform('${p}')">${p}</button>
+  `).join('');
+  
+  document.getElementById('modelFilters').innerHTML = MODELS.map(m => `
+    <button class="filter-btn ${m === activeModel ? 'active' : ''}" onclick="setModel('${m}')">${m}</button>
+  `).join('');
+}
+
+function setDept(d) { activeDept = d; renderSidebar(); render(); }
+function setPlatform(p) { activePlatform = p; renderFilters(); render(); }
+function setModel(m) { activeModel = m; renderFilters(); render(); }
+
+// Search
+document.getElementById('searchInput').addEventListener('input', function(e) {
+  searchKeyword = e.target.value.trim();
+  render();
+});
+
+// Init
+renderSidebar();
+renderFilters();
+render();
+</script>
+</body>
+</html>

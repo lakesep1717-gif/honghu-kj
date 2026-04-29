@@ -1,0 +1,10 @@
+var fs = require('fs');
+var h = fs.readFileSync('C:/Users/10540/.qclaw/workspace/rpa-scenarios/index.html', 'utf8');
+var r = h.indexOf('function render');
+var t = h.indexOf('function toggleSop');
+var between = h.slice(r, t);
+console.log('Between render and toggleSop:');
+console.log(between);
+console.log('---END---');
+console.log('toggleSop:');
+console.log(h.slice(t, t+200));
